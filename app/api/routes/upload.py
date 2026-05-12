@@ -5,6 +5,7 @@ import os
 from app.rag.ingestion import load_pdf
 from app.rag.chunking import chunk_documents
 from app.rag.embeddings import generate_embeddings
+from app.rag.vector_store import create_faiss_index
 
 from app.core.logger import logger
 
@@ -29,6 +30,7 @@ async def upload_pdf(file: UploadFile = File(...)):
 
         chunks = chunk_documents(documents)
         vectors, chunks = generate_embeddings(chunks)
+        create_faiss_index(vectors, chunks)
 
         return {
 
