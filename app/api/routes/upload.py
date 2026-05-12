@@ -4,6 +4,7 @@ import os
 
 from app.rag.ingestion import load_pdf
 from app.rag.chunking import chunk_documents
+from app.rag.embeddings import generate_embeddings
 
 from app.core.logger import logger
 
@@ -27,6 +28,7 @@ async def upload_pdf(file: UploadFile = File(...)):
         documents = load_pdf(file_path)
 
         chunks = chunk_documents(documents)
+        vectors, chunks = generate_embeddings(chunks)
 
         return {
 
@@ -35,6 +37,10 @@ async def upload_pdf(file: UploadFile = File(...)):
             "pages_loaded": len(documents),
 
             "chunks_created": len(chunks),
+
+            "embedding_created": len(vectors),
+
+            "embedding_diemension": len(vectors[0]),
 
             "status": "success"
         }
