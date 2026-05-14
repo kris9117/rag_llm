@@ -4,19 +4,32 @@ from pydantic import BaseModel
 from app.rag.retriever import retrieve_context
 from app.services.llm_service import generate_answer
 
+from fastapi import Depends
+from app.core.security import verify_api_key
+
 router = APIRouter()
 
 class QueryRequest(BaseModel):
     question: str
 
+
 @router.post("/query")
-async def query_docs(request: QueryRequest):
+async def query_docs(
+    request: QueryRequest,
+    _: str = Depends(verify_api_key)
+):
 
     results = retrieve_context(request.question)
 
     answer = generate_answer(request.question, results)
 
-    sources = [doc.page_content[:300] for doc in results]
+    sources = [
+    {
+        "text": doc.page_content[:300],
+        "page": doc.metadata.get("page", "NA")
+    }
+    for doc in results
+    ]
 
     return {
         "question": request.question,

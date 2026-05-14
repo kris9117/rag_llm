@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from app.core.logger import logger
 from app.api.routes.upload import router as upload_router
 from app.api.routes.query import router as query_router
+from app.core.exceptions import global_exception_handler
+from app.core.middleware import log_timing
+from fastapi import Request
 
 app = FastAPI(
     title="RAG LLM API",
@@ -10,6 +13,9 @@ app = FastAPI(
 
 app.include_router(upload_router)
 app.include_router(query_router)
+app.add_exception_handler(Exception, global_exception_handler)
+app.middleware("http")(log_timing)
+
 
 @app.get("/")
 async def home():
