@@ -11,7 +11,6 @@ def retrieve_context(query: str, top_k=3):
         results = search_faiss(query_vector, top_k=top_k)
 
         return results
-        print("\n===== RETRIEVED CHUNKS =====\n")
 
         
 

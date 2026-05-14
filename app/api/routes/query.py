@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from app.rag.retriever import retrieve_context
+from app.services.llm_service import generate_answer
 
 router = APIRouter()
 
@@ -13,9 +14,12 @@ async def query_docs(request: QueryRequest):
 
     results = retrieve_context(request.question)
 
-    context = [doc.page_content for doc in results]
+    answer = generate_answer(request.question, results)
+
+    sources = [doc.page_content[:300] for doc in results]
 
     return {
         "question": request.question,
-        "retrieved_chunks": context
+        "answer": answer,
+        "source_chunks": sources
     }
