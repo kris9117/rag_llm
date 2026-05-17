@@ -3,6 +3,7 @@ from typing import List
 
 class QueryRequest(BaseModel):
     question: str
+    session_id: str
 
 class QueryResponse(BaseModel):
     question: str

@@ -6,16 +6,32 @@ llm = ChatOllama(
     temperature=0
 )
 
-def generate_answer(question: str, context: list):
+def generate_answer(question, context, history):
+
     try:
-        joined_context = "\n\n".join([doc.page_content for doc in context])
+
+        joined_context = "\n\n".join(
+            [doc.page_content for doc in context]
+        )
+
+        history_text = "\n".join([
+            f"{msg['role']}: {msg['content']}"
+            for msg in history
+        ])
 
         prompt = f"""
-Answer ONLY using the context below.
-If answer is unavailable, say:
-I could not find this in uploaded documents.
+You are a helpful AI assistant.
 
-Context:
+Use:
+1. Previous conversation history
+2. Retrieved context
+
+to answer the user.
+
+Conversation History:
+{history_text}
+
+Retrieved Context:
 {joined_context}
 
 Question:
@@ -24,10 +40,12 @@ Question:
 
         response = llm.invoke(prompt)
 
-        logger.info("Generated local LLM response")
+        logger.info("Generated conversational response")
 
         return response.content
 
     except Exception as e:
+
         logger.error(str(e))
+
         raise e
