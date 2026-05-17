@@ -13,13 +13,7 @@ def load_pdf(pdf_path: str):
 
         logger.info(f"Loaded {len(documents)} pages")
 
-        print("\n========= FIRST PAGE CONTENT =========\n")
-
-        print(documents[0].page_content[:1000])
-
-        print("\n========= METADATA =========\n")
-
-        print(documents[0].metadata)
+        
 
         return documents
 
